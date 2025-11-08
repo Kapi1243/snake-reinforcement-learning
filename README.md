@@ -18,11 +18,12 @@ This project explores how an AI agent can learn to play Snake through **reinforc
 ### Key Features
 
 - ✅ **Custom Snake Environment**: Grid-based game implementation optimized for RL
-- ✅ **Tabular Q-Learning**: Classic RL algorithm with configurable hyperparameters
+- ✅ **Tabular Q-Learning**: Incremental updates with epsilon decay
 - ✅ **State Representation**: Efficient 8-bit binary encoding (256 possible states)
-- ✅ **Training Visualization**: Animated gameplay showing learning progress
-- ✅ **Performance Analytics**: Convergence graphs and metrics tracking
-- ✅ **Model Persistence**: Save and load trained models
+- ✅ **Length-Based Rewards**: Scaled rewards encouraging longer survival
+- ✅ **Early Stopping**: Automatic training termination when plateaued
+- ✅ **Training Visualization**: Auto-generated performance curves
+- ✅ **Model Persistence**: Save and load trained Q-tables
 - ✅ **Type Hints & Documentation**: Production-quality code standards
 
 ## 🧠 How It Works
@@ -43,17 +44,18 @@ This compact representation allows for 2^8 = 256 possible states, making tabular
 
 ### Q-Learning Algorithm
 
-The agent uses the **Q-learning update rule**:
+The agent uses the **incremental Q-learning update rule**:
 
 ```
-Q(s, a) ← r + γ · max[Q(s', a')]
+Q(s, a) ← Q(s, a) + α · [r + γ · max[Q(s', a')] - Q(s, a)]
 ```
 
 Where:
 - `s` = current state
 - `a` = action taken
 - `r` = immediate reward
-- `γ` = discount factor (default: 0.8)
+- `α` = learning rate (default: 0.1)
+- `γ` = discount factor (default: 0.9)
 - `s'` = next state
 - `a'` = possible next actions
 
@@ -61,28 +63,30 @@ Where:
 
 | Event | Reward |
 |-------|--------|
-| Eating food | +10 |
-| Moving toward food | +1 |
+| Eating food | +10.0 + (length × 0.5) |
+| Moving toward food | +1.1 |
+| Survival (each step) | +0.1 |
 | Collision (death) | -10 |
 
 ## 📊 Results
 
-The agent achieves significant improvement through training:
+The agent achieves consistent performance through Q-learning with epsilon decay and length-based reward scaling:
 
 <div align="center">
-  <img src="Images/ConvergenceGraph.png" alt="Q-Table Convergence" width="600"/>
-  <p><em>Q-value convergence over 5,000 training episodes</em></p>
+  <img src="results/training_progress.png" alt="Training Progress" width="700"/>
+  <p><em>Training progress showing average and maximum scores over episodes</em></p>
 </div>
 
 ### Performance Metrics
 
-| Metric | Random Policy | Trained Agent |
-|--------|---------------|---------------|
-| Avg. Length | 2-3 | 15-20 |
-| Max Length | 5 | 50+ |
-| Success Rate* | 5% | 85% |
+| Metric | Value |
+|--------|-------|
+| Best Average Score | 33.20 |
+| Best Single Score | 62 |
+| Board Coverage | 24.2% (62/256 squares) |
+| Training Episodes | ~15,700 (early stopping) |
 
-<sup>*Success rate = games reaching length ≥10</sup>
+The agent demonstrates solid learning on a 16×16 board using only 256 discrete states, showing the effectiveness of well-designed state representation and reward shaping.
 
 ## 🚀 Getting Started
 
@@ -135,15 +139,21 @@ print(f"Average score: {avg_score}")
 snake-reinforcement-learning/
 ├── src/
 │   ├── Snake.py              # Game environment
-│   ├── QLearningAgent.py     # Q-Learning implementation
+│   ├── QLearningAgent.py     # Q-Learning agent (main implementation)
+│   ├── config.py             # Configuration management
+│   ├── utils.py              # Visualization utilities
+│   ├── demo.py               # Interactive demos
 │   └── Visualizations/
 │       └── makeQconvergenceGraph.py
+├── notebooks/
+│   └── Snake_QLearning_Tutorial.ipynb  # Jupyter tutorial
 ├── Images/
 │   ├── AnimatedGames.gif     # Training animation
 │   └── ConvergenceGraph.png  # Q-value convergence plot
 ├── models/                   # Saved Q-tables
 ├── results/                  # Training outputs
 ├── requirements.txt
+├── setup.py
 └── README.md
 ```
 
@@ -173,10 +183,11 @@ Key parameters and their effects:
 
 | Parameter | Default | Effect |
 |-----------|---------|--------|
-| `gamma` (γ) | 0.8 | Higher → values future rewards more |
-| `epsilon` (ε) | 0.2 | Higher → more exploration during training |
-| `learning_rate` (α) | 0.9 | Higher → faster but less stable learning |
-| `board_size` | 16×16 | Larger → harder but more interesting |
+| `gamma` (γ) | 0.9 | Higher → values future rewards more |
+| `epsilon` (ε) | 0.2 → 0.05 | Decays during training for exploration→exploitation |
+| `epsilon_decay` | 0.9995 | Controls rate of epsilon reduction |
+| `learning_rate` (α) | 0.1 | Higher → faster but less stable learning |
+| `board_size` | 16×16 | Larger → harder but more realistic |
 
 ## 🎨 Customization
 
@@ -198,7 +209,11 @@ agent.train(board_size=20, num_episodes=10000)  # 20×20 board
 
 ### Adjust exploration rate
 ```python
-agent = QLearningAgent(epsilon=0.3)  # More exploration
+agent = QLearningAgent(
+    epsilon=0.3,           # Higher initial exploration
+    epsilon_decay=0.999,   # Faster decay
+    min_epsilon=0.01       # Lower minimum
+)
 ```
 
 ## 🔮 Future Improvements

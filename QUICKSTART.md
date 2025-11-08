@@ -38,13 +38,19 @@ Follow the step-by-step tutorial with visualizations.
 ```python
 from src.QLearningAgent import QLearningAgent
 
-# Create agent
-agent = QLearningAgent(gamma=0.8, epsilon=0.2)
+# Create agent with optimized hyperparameters
+agent = QLearningAgent(
+    gamma=0.9,
+    epsilon=0.2,
+    learning_rate=0.1,
+    epsilon_decay=0.9995,
+    min_epsilon=0.05
+)
 
-# Train
+# Train (with early stopping)
 agent.train(
     board_size=16,
-    num_episodes=5000,
+    num_episodes=20000,
     verbose=True
 )
 

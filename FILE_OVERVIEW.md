@@ -8,8 +8,7 @@
 |------|---------|----------|
 | **README.md** | Main project overview - First thing recruiters see | ⭐⭐⭐ |
 | **QUICKSTART.md** | 5-minute getting started guide | ⭐⭐⭐ |
-| **PUBLISH_CHECKLIST.md** | Step-by-step guide to publish on GitHub | ⭐⭐⭐ |
-| **PROJECT_TRANSFORMATION.md** | Summary of all improvements made | ⭐⭐ |
+| **FILE_OVERVIEW.md** | This file - explains all project files | ⭐⭐ |
 | **CONTRIBUTING.md** | Guidelines for contributors | ⭐⭐ |
 | **CHANGELOG.md** | Version history | ⭐ |
 | **LICENSE** | MIT License for open source | ⭐⭐⭐ |
@@ -21,8 +20,8 @@
 
 | File | Purpose | Lines | Key Features |
 |------|---------|-------|-------------|
-| **Snake.py** | Game environment | ~350 | Type hints, docstrings, clean API |
-| **QLearningAgent.py** | Main RL agent | ~450 | Training, evaluation, visualization |
+| **Snake.py** | Game environment | ~485 | Type hints, docstrings, RL interface, length-based rewards |
+| **QLearningAgent.py** | Main RL agent | ~544 | Epsilon decay, early stopping, auto-visualization, incremental Q-updates |
 | **config.py** | Configuration management | ~150 | Hyperparameters, presets |
 | **utils.py** | Utility functions | ~300 | Plotting, analysis tools |
 | **demo.py** | Interactive demo script | ~250 | User-friendly interface |
@@ -49,14 +48,14 @@ Shows:
 │
 ├── 📄 README.md                    # ⭐ Start here!
 ├── 📄 QUICKSTART.md                # ⭐ Quick setup
-├── 📄 PUBLISH_CHECKLIST.md         # ⭐ Publishing guide
-├── 📄 PROJECT_TRANSFORMATION.md    # What changed
+├── 📄 FILE_OVERVIEW.md             # This file
 ├── 📄 CONTRIBUTING.md              # Contribution rules
 ├── 📄 CHANGELOG.md                 # Version history
 ├── 📄 LICENSE                      # MIT License
 ├── 📄 requirements.txt             # Dependencies
 ├── 📄 setup.py                     # Package config
 ├── 📄 .gitignore                   # Git ignore
+├── 📄 training_curve.png           # Auto-generated training visualization
 │
 ├── 📁 src/                         # Source code
 │   ├── Snake.py                    # ⭐ Game environment

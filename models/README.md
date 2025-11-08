@@ -18,7 +18,7 @@ print(f"Average score: {avg_score}")
 ## Training and Saving
 
 ```python
-agent = QLearningAgent(gamma=0.8, epsilon=0.2)
-agent.train(board_size=16, num_episodes=10000)
+agent = QLearningAgent(gamma=0.9, epsilon=0.2, learning_rate=0.1)
+agent.train(board_size=16, num_episodes=20000)
 agent.save('models/my_model.pkl')
 ```
