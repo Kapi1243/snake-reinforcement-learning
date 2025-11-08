@@ -45,11 +45,13 @@ class QLearningAgent:
     
     def __init__(
         self,
-        gamma: float = 0.8,
+        gamma: float = 0.9,
         epsilon: float = 0.2,
-        learning_rate: float = 0.9,
+        learning_rate: float = 0.1,
         num_states: int = 256,
-        num_actions: int = 4
+        num_actions: int = 4,
+        epsilon_decay: float = 0.9995,
+        min_epsilon: float = 0.05
     ):
         """
         Initialize the Q-Learning agent.
@@ -65,8 +67,11 @@ class QLearningAgent:
         self.num_actions = num_actions
         self.gamma = gamma
         self.epsilon = epsilon
+        self.initial_epsilon = epsilon  # Store initial value
+        self.epsilon_decay = epsilon_decay
+        self.min_epsilon = min_epsilon
         self.learning_rate = learning_rate
-        
+
         # Initialize Q-table with zeros
         self.q_table = np.zeros((num_states, num_actions))
         
@@ -96,9 +101,7 @@ class QLearningAgent:
         """
         Update Q-value using the Q-learning update rule.
         
-        Two update strategies are available:
-        1. Direct replacement: Q(s,a) = r + γ * max(Q(s',a'))
-        2. Incremental: Q(s,a) = Q(s,a) + α * (r + γ * max(Q(s',a')) - Q(s,a))
+        Uses incremental update with learning rate for smoother convergence.
         
         Args:
             state: Current state
@@ -106,13 +109,14 @@ class QLearningAgent:
             reward: Reward received
             next_state: Resulting state
         """
-        # Strategy 1: Direct replacement (simpler, works well for deterministic environments)
-        self.q_table[state, action] = reward + self.gamma * np.max(self.q_table[next_state, :])
-        
-        # Strategy 2: Incremental update (uncomment to use)
-        # current_q = self.q_table[state, action]
-        # max_next_q = np.max(self.q_table[next_state, :])
-        # self.q_table[state, action] = current_q + self.learning_rate * (reward + self.gamma * max_next_q - current_q)
+        # Incremental update (better for learning stability with longer snakes)
+        current_q = self.q_table[state, action]
+        max_next_q = np.max(self.q_table[next_state, :])
+        self.q_table[state, action] = current_q + self.learning_rate * (reward + self.gamma * max_next_q - current_q)
+    
+    def decay_epsilon(self) -> None:
+        """Decay epsilon after each episode to reduce exploration over time."""
+        self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
     
     def train(
         self,
@@ -138,12 +142,17 @@ class QLearningAgent:
             Dictionary containing training statistics
         """
         best_avg_score = 0
+        best_single_score = 0
         best_q_table = None
+        no_improvement_count = 0
+        patience = 50  # Stop if no improvement for this many evaluations
         
         if verbose:
             print(f"Training Q-Learning Agent for {num_episodes} episodes...")
-            print(f"Board size: {board_size}x{board_size}")
-            print(f"Hyperparameters: γ={self.gamma}, ε={self.epsilon}, α={self.learning_rate}\n")
+            print(f"Board size: {board_size}x{board_size} ({board_size * board_size} squares)")
+            print(f"Hyperparameters: γ={self.gamma}, ε={self.epsilon}→{self.min_epsilon}, α={self.learning_rate}")
+            print(f"Epsilon decay: {self.epsilon_decay}")
+            print(f"Early stopping patience: {patience} evaluations\n")
         
         for episode in range(num_episodes):
             game = SnakeGame(board_size, board_size)
@@ -157,14 +166,24 @@ class QLearningAgent:
                 self.update_q_value(state, action, reward, next_state)
                 state = next_state
             
+            # Decay exploration rate after each episode
+            self.decay_epsilon()
+            
             # Periodic evaluation
             if episode % eval_frequency == 0:
                 avg_score, scores = self.evaluate(board_size, eval_episodes)
+                
+                # Track best single score ever achieved
+                if max(scores) > best_single_score:
+                    best_single_score = max(scores)
                 
                 # Track best model
                 if avg_score > best_avg_score:
                     best_avg_score = avg_score
                     best_q_table = self.q_table.copy()
+                    no_improvement_count = 0  # Reset counter
+                else:
+                    no_improvement_count += 1
                 
                 # Record training progress
                 self.training_history.append({
@@ -178,6 +197,12 @@ class QLearningAgent:
                 if verbose:
                     print(f"Episode {episode:5d} | Avg Score: {avg_score:.2f} | "
                           f"Best: {best_avg_score:.2f} | Range: [{min(scores)}-{max(scores)}]")
+                
+                # Early stopping check
+                if no_improvement_count >= patience:
+                    if verbose:
+                        print(f"\nEarly stopping at episode {episode}: No improvement for {patience} evaluations")
+                    break
             
             # Save Q-table snapshot for convergence analysis
             if save_q_history and episode % 100 == 0:
@@ -188,9 +213,11 @@ class QLearningAgent:
             self.q_table = best_q_table
             if verbose:
                 print(f"\nTraining complete! Best average score: {best_avg_score:.2f}")
+                print(f"Best single score achieved: {best_single_score}")
         
         return {
             'best_avg_score': best_avg_score,
+            'best_single_score': best_single_score,
             'final_avg_score': self.training_history[-1]['avg_score'] if self.training_history else 0,
             'training_history': self.training_history
         }
@@ -459,17 +486,17 @@ if __name__ == "__main__":
     print("Snake Q-Learning Agent Training")
     print("="*60 + "\n")
     
-    # Initialize agent
+    # Initialize agent with optimized hyperparameters
     agent = QLearningAgent(
-        gamma=0.8,
+        gamma=0.9,
         epsilon=0.2,
-        learning_rate=0.9
+        learning_rate=0.1
     )
     
     # Train the agent
     training_results = agent.train(
         board_size=16,
-        num_episodes=5000,
+        num_episodes=20000,  # Increased for better performance
         eval_frequency=100,
         eval_episodes=25,
         save_q_history=False,  # Set to True for animation
@@ -478,6 +505,26 @@ if __name__ == "__main__":
     
     # Save the trained model
     agent.save('models/q_learning_snake.pkl')
+    
+    # Auto-generate training visualization
+    if agent.training_history:
+        print("\nGenerating training curve...")
+        episodes = [h['episode'] for h in agent.training_history]
+        avg_scores = [h['avg_score'] for h in agent.training_history]
+        max_scores = [h['max_score'] for h in agent.training_history]
+        
+        plt.figure(figsize=(10, 6))
+        plt.plot(episodes, avg_scores, label='Average Score', linewidth=2)
+        plt.plot(episodes, max_scores, label='Max Score', alpha=0.6, linestyle='--')
+        plt.xlabel('Episode')
+        plt.ylabel('Score')
+        plt.title('Q-Learning Training Progress')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig('training_curve.png', dpi=150)
+        print("Training curve saved to 'training_curve.png'")
+        plt.close()
     
     # Plot training progress
     agent.plot_training_progress(save_path='results/training_progress.png')
@@ -490,3 +537,7 @@ if __name__ == "__main__":
     print(f"Average Score over 100 games: {avg_score:.2f}")
     print(f"Best Score: {max(scores)}")
     print(f"Score Range: [{min(scores)}, {max(scores)}]")
+    print(f"\nTraining Summary:")
+    print(f"  Best average during training: {training_results['best_avg_score']:.2f}")
+    print(f"  Best single score during training: {training_results['best_single_score']}")
+    print(f"  Board coverage: {(training_results['best_single_score']/256)*100:.1f}%")

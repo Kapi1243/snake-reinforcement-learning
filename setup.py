@@ -13,11 +13,10 @@ setup(
     name="snake-rl",
     version="2.0.0",
     author="Kacper Kowalski",
-    author_email="your.email@example.com",
     description="A modern Q-Learning implementation for the Snake game",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/snake-reinforcement-learning",
+    url="https://github.com/Kapi1243/snake-reinforcement-learning",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -58,7 +57,7 @@ setup(
     },
     keywords="reinforcement-learning q-learning snake machine-learning ai",
     project_urls={
-        "Bug Reports": "https://github.com/yourusername/snake-reinforcement-learning/issues",
-        "Source": "https://github.com/yourusername/snake-reinforcement-learning",
+        "Bug Reports": "https://github.com/Kapi1243/snake-reinforcement-learning/issues",
+        "Source": "https://github.com/Kapi1243/snake-reinforcement-learning",
     },
 )

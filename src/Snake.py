@@ -387,9 +387,12 @@ class SnakeGame:
         reward = 0.0
         
         if self._is_valid_move(action):
-            # Small positive reward for moving toward food
+            # Small survival bonus to encourage longer games
+            reward = 0.1
+            
+            # Additional reward for moving toward food
             if self._get_food_direction()[action] == 1:
-                reward = 1.0
+                reward += 1.0
             
             # Update old head position to body
             head_x, head_y = self.snake.get_head().get_position()
@@ -404,7 +407,8 @@ class SnakeGame:
                 self.board[pot_y, pot_x] = self.HEAD
                 self._spawn_food()
                 self.length += 1
-                reward = 10.0  # Large reward for eating food
+                # Scaled reward: longer snake = higher reward for continued success
+                reward = 10.0 + (self.length * 0.5)
             else:
                 # Normal movement
                 old_tail_x, old_tail_y, new_head_x, new_head_y = self.snake.move(action)
