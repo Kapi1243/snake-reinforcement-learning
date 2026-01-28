@@ -11,10 +11,11 @@ See notebooks/Snake_QLearning_Tutorial.ipynb for usage examples.
 """
 
 import warnings
+
 warnings.warn(
     "QLearning.py is deprecated. Please use QLearningAgent.py instead.",
     DeprecationWarning,
-    stacklevel=2
+    stacklevel=2,
 )
 
 import random
@@ -22,7 +23,9 @@ from Snake import SnakeGame
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-#%%
+
+# %%
+
 
 def evaluateScore(Q, boardDim, numRuns, displayGame=False):
     # Run the game for a specified number of runs given a specific Q matrix
@@ -98,13 +101,13 @@ for episode in range(numEpisodes):
             bestLength = averageLength
             bestQ = np.copy(Q)
         print("Episode", episode, "Average snake length without exploration:", averageLength)
-        
-#%%
-#Animate games at different episodes
+
+# %%
+# Animate games at different episodes
 print("Generating data for animation...")
-#plotEpisodes = [0, 200, 300, 400, 500, 600, 700, 800, 900]
+# plotEpisodes = [0, 200, 300, 400, 500, 600, 700, 800, 900]
 plotEpisodes = [0, 200, 400, 600, 800, 1000, 2500, 5000, 10000]
-fig, axes = plt.subplots(3, 3, figsize=(9,9))
+fig, axes = plt.subplots(3, 3, figsize=(9, 9))
 
 axList = []
 ims = []
@@ -114,15 +117,22 @@ labels = []
 
 for i, row in enumerate(axes):
     for j, ax in enumerate(row):
-        ax.set_title("Episode " + str(plotEpisodes[i*len(row) + j]))
+        ax.set_title("Episode " + str(plotEpisodes[i * len(row) + j]))
         ax.get_yaxis().set_visible(False)
         ax.get_xaxis().set_visible(False)
         axList.append(ax)
-        ims.append(ax.imshow(np.zeros([boardDim, boardDim]), vmin=-1, vmax=1, cmap='RdGy'))
-        labels.append(ax.text(0,15, "Length: 0", bbox={'facecolor':'w', 'alpha':0.75, 'pad':1, 'edgecolor':'white'}))
+        ims.append(ax.imshow(np.zeros([boardDim, boardDim]), vmin=-1, vmax=1, cmap="RdGy"))
+        labels.append(
+            ax.text(
+                0,
+                15,
+                "Length: 0",
+                bbox={"facecolor": "w", "alpha": 0.75, "pad": 1, "edgecolor": "white"},
+            )
+        )
         dataArrays.append(list())
         scores.append(list())
-        
+
 stopAnimation = False
 maxFrames = 1000
 cutoff = 100
@@ -161,18 +171,28 @@ for k in range(numGames):
             print("Game", k, "finished, total moves:", len(dataArrays[0]))
             break
 
+
 def animate(frameNum):
     for i, im in enumerate(ims):
         labels[i].set_text("Length: " + str(scores[i][frameNum]))
         ims[i].set_data(dataArrays[i][frameNum])
-    return ims+labels
+    return ims + labels
+
+
 print("Animating snakes at different episodes...")
 
 numFrames = len(dataArrays[0])
-ani = animation.FuncAnimation(fig, func=animate, frames=numFrames,blit=True, interval=75, repeat=False, )
+ani = animation.FuncAnimation(
+    fig,
+    func=animate,
+    frames=numFrames,
+    blit=True,
+    interval=75,
+    repeat=False,
+)
 plt.show(block=False)
-#%%
+# %%
 ##uncomment below if you want to output to a video file
-#print("Saving to file")
-#ani.save('AnimatedGames.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
-#print("Done")
+# print("Saving to file")
+# ani.save('AnimatedGames.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
+# print("Done")
