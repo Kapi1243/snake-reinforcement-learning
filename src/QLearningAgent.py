@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from datetime import datetime
 
-from Snake import SnakeGame, Snake
+from .Snake import SnakeGame, Snake
 
 
 class QLearningAgent:

@@ -1,0 +1,118 @@
+SNAKE AI EXPERIMENTS LOG
+========================
+
+Baseline (5-seed average)
+-----------------
+Config:
+  gamma: 0.9
+  learning_rate: 0.1
+  epsilon: 0.1
+  board_size: 12
+  num_episodes: 5000
+
+Results:
+Avg score over eval: 22.95 ± 0.80
+Best score (median): 43
+Fail rate (<5): 0.2%
+
+Detailed breakdown:
+  Individual avg scores: ['21.72', '23.39', '22.99', '22.54', '24.10']
+  Individual best scores: [45, 43, 42, 40, 45]
+  Individual fail rates: ['0.0%', '0.0%', '1.0%', '0.0%', '0.0%']
+
+
+Test 2 - Increase gamma (5-seed average)
+-----------------------------------------
+Config:
+  gamma: 0.95
+  learning_rate: 0.1
+  epsilon: 0.1
+  board_size: 12
+  num_episodes: 5000
+
+Results:
+Avg score over eval: 21.15 ± 2.20
+Best score (median): 40
+Fail rate (<5): 1.8%
+
+Detailed breakdown:
+  Individual avg scores: ['19.71', '22.41', '17.52', '23.31', '22.79']
+  Individual best scores: [43, 40, 37, 46, 40]
+  Individual fail rates: ['4.0%', '5.0%', '0.0%', '0.0%', '0.0%']
+
+Test 3 - Increase learning Rate (5-seed average)
+-----------------------------------------
+Config:
+ gamma: 0.9
+ learning_rate: 0.3
+ epsilon: 0.1
+ board_size: 12
+ num_episodes: 5000
+
+Results:
+Avg score over eval: 23.21 ± 1.16
+Best score (median): 45
+Fail rate (<5): 0.2%
+
+Detailed breakdown:
+  Individual avg scores: ['24.84', '21.23', '23.18', '23.20', '23.61']
+  Individual best scores: [43, 46, 40, 45, 45]
+  Individual fail rates: ['0.0%', '1.0%', '0.0%', '0.0%', '0.0%']
+
+Test 4 - Increase Exploration Rate / Epsilon (5-seed average)
+-----------------------------------------
+Config:
+ gamma: 0.9
+ learning_rate: 0.1
+ epsilon: 0.3
+ board_size: 12
+ num_episodes: 5000
+
+Results:
+Avg score over eval: 25.54 ± 1.46
+Best score (median): 48
+Fail rate (<5): 0.2%
+
+Detailed breakdown:
+  Individual avg scores: ['25.11', '27.54', '23.24', '25.25', '26.57']
+  Individual best scores: [43, 45, 53, 50, 48]
+  Individual fail rates: ['0.0%', '0.0%', '1.0%', '0.0%', '0.0%']
+
+Test  - Combined Epsilon + Learning Rate (5-seed average)
+-----------------------------------------
+Config:
+ gamma: 0.9
+ learning_rate: 0.3
+ epsilon: 0.3
+ board_size: 12
+ num_episodes: 5000
+
+Results:
+Avg score over eval: 26.45 ± 1.44
+Best score (median): 44
+Fail rate (<5): 0.0%
+
+Detailed breakdown:
+  Individual avg scores: ['25.12', '28.84', '25.79', '25.17', '27.35']
+  Individual best scores: [42, 52, 41, 44, 49]
+  Individual fail rates: ['0.0%', '0.0%', '0.0%', '0.0%', '0.0%']
+
+Test 5 - Higher Epsilon (5-seed average)
+-----------------------------------------
+Config:
+ gamma: 0.9
+ learning_rate: 0.3
+ epsilon: 0.4
+ board_size: 12
+ num_episodes: 5000
+
+Results:
+Avg score over eval: 25.14 ± 0.71
+Best score (median): 45
+Fail rate (<5): 0.0%
+
+Detailed breakdown:
+  Individual avg scores: ['24.82', '24.43', '24.62', '25.42', '26.40']
+  Individual best scores: [45, 49, 45, 45, 45]
+  Individual fail rates: ['0.0%', '0.0%', '0.0%', '0.0%', '0.0%']
+  

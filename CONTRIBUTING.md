@@ -1,52 +1,162 @@
-# Contributing to Snake Q-Learning
+# Contributing to Snake Reinforcement Learning
 
-Thank you for your interest in contributing! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing!
 
-## How to Contribute
-
-### Reporting Bugs
-
-If you find a bug, please create an issue with:
-- A clear, descriptive title
-- Steps to reproduce the problem
-- Expected vs actual behavior
-- Your environment (OS, Python version)
-- Relevant code snippets or error messages
-
-### Suggesting Enhancements
-
-Enhancement suggestions are welcome! Please include:
-- Clear description of the proposed feature
-- Rationale for why it would be useful
-- Potential implementation approach (if applicable)
-
-### Pull Requests
+## Quick Start
 
 1. Fork the repository
-2. Create a new branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Add tests if applicable
-5. Update documentation
-6. Commit your changes (`git commit -m 'Add amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
+2. Clone your fork
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/snake-reinforcement-learning.git
+   cd snake-reinforcement-learning
+   ```
 
-## Development Setup
+3. Set up development environment
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -e .[dev]
+   ```
+
+4. Install pre-commit hooks
+   ```bash
+   pre-commit install
+   ```
+
+## Development Workflow
+
+### Code Style
+
+Maintain code quality with:
+
+- Black for code formatting (line length: 100)
+- isort for import sorting
+- flake8 for linting
+- mypy for type checking
+- bandit for security checks
+
+Run all checks:
+```bash
+python scripts/check_code_quality.py
+```
+
+Or format code automatically:
+```bash
+black src tests
+isort src tests
+```
+
+### Testing
+
+Write tests for all new features:
 
 ```bash
-# Clone your fork
-git clone https://github.com/YOUR-USERNAME/snake-reinforcement-learning.git
-cd snake-reinforcement-learning
+# Run all tests
+pytest
 
-# Install dependencies
-pip install -r requirements.txt
+# Run with coverage
+pytest --cov=src --cov-report=html
 
-# Run tests (if available)
-python -m pytest tests/
-
-# Try the demo
-python src/demo.py
+# Run specific test file
+pytest tests/test_snake.py -v
 ```
+
+### Type Hints
+
+All new code should include type hints:
+
+```python
+def train_agent(
+    agent: QLearningAgent,
+    env: SnakeGame,
+    episodes: int = 1000
+) -> Dict[str, float]:
+    """Train the agent."""
+    ...
+```
+
+### Documentation
+
+- Add docstrings to all public functions/classes (Google style)
+- Update README.md for new features
+- Add examples to docstrings when helpful
+
+## Reporting Bugs
+
+Include when reporting:
+
+1. Python version and OS
+2. Minimal code to reproduce
+3. Expected vs actual behavior
+4. Error messages/stack traces
+
+## Feature Requests
+
+For new features:
+
+1. Check existing issues first
+2. Describe the use case
+3. Explain value proposition
+4. Consider implementation approach
+
+## Pull Request Process
+
+1. Create a feature branch
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. Make your changes
+   - Write code following style guidelines
+   - Add tests for new functionality
+   - Update documentation
+
+3. Commit your changes
+   ```bash
+   git add .
+   git commit -m "feat: add new feature"
+   ```
+   
+   Use conventional commits:
+   - `feat:` new feature
+   - `fix:` bug fix
+   - `docs:` documentation changes
+   - `test:` adding tests
+   - `refactor:` code refactoring
+   - `perf:` performance improvements
+
+4. Run all checks
+   ```bash
+   python scripts/check_code_quality.py
+   ```
+
+5. Push and create PR
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+## Project Structure
+
+```
+snake-reinforcement-learning/
+├── src/                    # Source code
+│   ├── Snake.py           # Game environment
+│   ├── QLearningAgent.py  # Tabular Q-learning
+│   ├── DQNAgent.py        # Deep Q-Network
+│   ├── cli.py             # Command-line interface
+│   ├── config.py          # Configuration management
+│   ├── experiment_tracking.py  # Logging utilities
+│   └── profiling.py       # Performance tools
+├── tests/                 # Test suite
+├── scripts/               # Utility scripts
+├── models/                # Saved models
+├── results/               # Training results
+└── docs/                  # Documentation
+```
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the MIT License.
 
 ## Code Style
 
