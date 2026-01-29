@@ -156,7 +156,7 @@ flake8 src
 pre-commit install
 ```
 
-## Optimal Hyperparameters
+## Current Optimal Hyperparameters
 
 Based on 5-seed evaluation:
 
@@ -171,10 +171,6 @@ Based on 5-seed evaluation:
 Average performance: **26.45 ± 1.44** | Best: 52 | Fail rate: 0%
 
 ## References
-
-- Sutton & Barto: Reinforcement Learning: An Introduction
-- Q-Learning fundamentals: Watkins & Dayan (1992)
-- Deep Q-Networks: Mnih et al. (2015)
 
 ## License
 
